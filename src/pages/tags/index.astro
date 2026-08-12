@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../utils/url';
+
+const notes = await getCollection('notes', ({ data }) => data.draft !== true);
+
+const tagCounts = new Map<string, number>();
+for (const note of notes) {
+  for (const tag of note.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="Tags" description="All tags in the knowledge base.">
+  <h1>Tags</h1>
+  <p>
+    {tags.map(([tag, count]) => (
+      <a class="tag" href={withBase(`tags/${tag}/`)}>
+        {tag} ({count})
+      </a>
+    ))}
+  </p>
+</BaseLayout>

@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/url';
+
+const notes = (await getCollection('notes', ({ data }) => data.draft !== true))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const recent = notes.slice(0, 5);
+
+const tagCounts = new Map<string, number>();
+for (const note of notes) {
+  for (const tag of note.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="Home">
+  <h1>muninn</h1>
+  <p>
+    A personal knowledge base for writing, ideas, and things worth
+    remembering. There {notes.length === 1 ? 'is' : 'are'} currently
+    <strong>{notes.length}</strong> {notes.length === 1 ? 'note' : 'notes'}.
+  </p>
+
+  <h2>Recent notes</h2>
+  <ul class="note-list">
+    {recent.map((note) => (
+      <li>
+        <a class="note-title" href={withBase(`notes/${note.id}/`)}>
+          {note.data.title}
+        </a>
+        <div class="note-meta">
+          <time datetime={note.data.date.toISOString()}>
+            {note.data.date.toLocaleDateString('en', { dateStyle: 'medium' })}
+          </time>
+          {note.data.description && ` — ${note.data.description}`}
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  {tags.length > 0 && (
+    <>
+      <h2>Tags</h2>
+      <p>
+        {tags.map(([tag, count]) => (
+          <a class="tag" href={withBase(`tags/${tag}/`)}>
+            {tag} ({count})
+          </a>
+        ))}
+      </p>
+    </>
+  )}
+</BaseLayout>

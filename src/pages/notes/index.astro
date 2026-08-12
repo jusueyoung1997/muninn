@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../utils/url';
+
+const notes = (await getCollection('notes', ({ data }) => data.draft !== true))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Notes" description="All notes in the knowledge base.">
+  <h1>All notes</h1>
+  <ul class="note-list">
+    {notes.map((note) => (
+      <li>
+        <a class="note-title" href={withBase(`notes/${note.id}/`)}>
+          {note.data.title}
+        </a>
+        <div class="note-meta">
+          <time datetime={note.data.date.toISOString()}>
+            {note.data.date.toLocaleDateString('en', { dateStyle: 'medium' })}
+          </time>
+          {note.data.tags.length > 0 && ` · ${note.data.tags.join(', ')}`}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
