@@ -3,7 +3,7 @@ title: "Flow Generative Models：从引力场理解 PFGM"
 description: "以苏剑林的文章为起点，梳理 PFGM 的增维构造、生成 ODE、先验分布与场的学习。"
 date: 2026-10-15
 tags: [generative-models, pfgm, ode]
-draft: true
+draft: false
 ---
 
 本文是一份持续补充的学习笔记，阅读起点是苏剑林的[《生成扩散模型漫谈（十三）：从万有引力到扩散模型》](https://kexue.fm/archives/9305)。先围绕其中的 **Poisson Flow Generative Models（PFGM）** 建立理解框架，其他流模型留待后续讨论。
