@@ -1,0 +1,28 @@
+{
+  "name": "muninn",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "A personal knowledge base for writing, ideas, and things worth remembering.",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy",
+    "preview": "astro preview",
+    "sync": "astro sync"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.2.2",
+    "astro": "^7.2.1",
+    "katex": "^0.19.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.0"
+  },
+  "overrides": {
+    "katex": "$katex"
+  }
+}

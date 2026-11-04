@@ -1,0 +1,17 @@
+---
+const lines = Array.from({ length: 23 }, (_, i) => {
+  const y = 28 + i * 9;
+  return `M 12 ${y} C 105 ${y - 20}, 108 ${240 - i * 10}, 190 ${130 + (i - 11) * 2} S 283 ${y - 12}, 348 ${y + 5}`;
+});
+---
+<div class="flow-art" aria-hidden="true">
+  <svg viewBox="0 0 360 270" fill="none">
+    <defs><pattern id="plot-grid" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="currentColor" opacity=".22" /></pattern></defs>
+    <rect width="360" height="270" fill="url(#plot-grid)" />
+    {lines.map((d, i) => <path d={d} stroke="currentColor" stroke-width={i === 11 ? 1.6 : .65} opacity={i === 11 ? .85 : .3} />)}
+    <circle cx="190" cy="130" r="4" fill="var(--color-bg)" stroke="currentColor" stroke-width="1.5" />
+    <path d="M 12 253 H 348 M 12 248 V 258 M 348 248 V 258" stroke="currentColor" stroke-width=".6" opacity=".4" />
+    <text x="12" y="269">NOISE</text><text x="301" y="269">SIGNAL</text>
+  </svg>
+  <span class="art-caption mono">fig. 01 — finding a little order</span>
+</div>

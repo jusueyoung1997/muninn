@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteList from '../../components/NoteList.astro';
+import { withBase } from '../../utils/url';
+export async function getStaticPaths() {
+  const notes = await getCollection('notes', ({ data }) => data.draft !== true);
+  const tags = new Set(notes.flatMap(note => note.data.tags));
+  return [...tags].map(tag => ({ params: { tag }, props: { tag, notes: notes.filter(note => note.data.tags.includes(tag)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) } }));
+}
+const { tag, notes } = Astro.props;
+---
+<BaseLayout title={`主题：${tag}`}>
+  <header class="page-intro"><a class="back-link" href={withBase('tags/')}>← 全部主题</a><h1><span class="accent"># </span>{tag}</h1><p>关于这个主题的 {notes.length} 篇笔记。</p></header>
+  <div class="archive-body"><NoteList notes={notes} /></div>
+</BaseLayout>

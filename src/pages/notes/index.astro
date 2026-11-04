@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteList from '../../components/NoteList.astro';
+const notes = (await getCollection('notes', ({ data }) => data.draft !== true)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const years = [...new Set(notes.map(note => note.data.date.getUTCFullYear()))];
+---
+<BaseLayout title="文章归档" description="关于代码、模型与好奇心的全部技术笔记。">
+  <header class="page-intro"><p class="eyebrow">THE ARCHIVE / {String(notes.length).padStart(2, '0')} ENTRIES</p><h1>文章归档<span class="accent">.</span></h1><p>把学过的、想过的、试过的，放在这里。</p></header>
+  <div class="archive-body">{years.map(year => <section class="year-section"><h2 class="year-label mono">{year}</h2><NoteList notes={notes.filter(note => note.data.date.getUTCFullYear() === year)} /></section>)}</div>
+</BaseLayout>

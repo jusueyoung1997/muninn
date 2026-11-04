@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+<title id="title">Flow Matching 文生图：训练与推理</title>
+<desc id="desc">训练中从图片与噪声端点构造插值位置和速度标签；推理从新噪声出发，用文本条件和速度网络反复更新 latent，再解码。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#6d8373" stroke-width="1.4"/></marker></defs>
+<rect width="1200" height="620" rx="14" fill="#f9f8f5"/>
+<g font-family="system-ui,-apple-system,PingFang SC,Microsoft YaHei,sans-serif" fill="#30382f">
+<text x="38" y="43" font-size="24" font-weight="600">从训练标签，到文生图采样</text>
+<text x="38" y="91" font-size="17" fill="#30382f">训练：由已知端点制造标签</text>
+<rect x="38" y="120" width="175" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="53" y="150" font-size="18" fill="#30382f">图片 I → 编码器 E</text>
+<text x="53" y="176" font-size="13" fill="#6b7465">得到数据 latent z₁</text>
+<rect x="38" y="222" width="175" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="53" y="252" font-size="18" fill="#30382f">随机噪声 z₀</text>
+<text x="53" y="278" font-size="13" fill="#6b7465">与 z₁ 同形状</text>
+<rect x="285" y="173" width="218" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="300" y="203" font-size="18" fill="#30382f">线性插值 zₜ</text>
+<text x="300" y="229" font-size="13" fill="#6b7465">(1−t)z₀ + tz₁</text>
+<rect x="594" y="173" width="206" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="609" y="203" font-size="18" fill="#30382f">速度网络 vθ</text>
+<text x="609" y="229" font-size="13" fill="#6b7465">输入 zₜ、时间 t、文本 c</text>
+<rect x="889" y="173" width="270" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="904" y="203" font-size="18" fill="#30382f">速度 MSE</text>
+<text x="904" y="229" font-size="13" fill="#6b7465">预测速度 ↔ 端点差 z₁−z₀</text>
+<rect x="520" y="64" width="280" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="535" y="94" font-size="18" fill="#30382f">prompt → 文本编码器 T</text>
+<text x="535" y="120" font-size="13" fill="#6b7465">提供文本条件 c</text>
+<path d="M213 158H248V198H274" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M213 260H248V225H274" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M503 211H583" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M800 211H878" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M695 141V162" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M125 299V326H1023V260" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="320" y="316" font-size="14" fill="#6b7465">由这对端点直接计算速度标签 z₁−z₀</text>
+<path d="M38 352H1159" stroke="#dce0d5"/>
+<text x="38" y="389" font-size="17" fill="#30382f">推理：固定文本条件，多次调用速度网络；此时没有目标图片</text>
+<rect x="38" y="445" width="175" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="53" y="475" font-size="18" fill="#30382f">新噪声 ẑ₀</text>
+<text x="53" y="501" font-size="13" fill="#6b7465">采样起点</text>
+<rect x="285" y="445" width="218" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="300" y="475" font-size="18" fill="#30382f">ODE 求解器</text>
+<text x="300" y="501" font-size="13" fill="#6b7465">维护当前 latent 与时间</text>
+<rect x="594" y="445" width="206" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="609" y="475" font-size="18" fill="#30382f">速度网络 vθ</text>
+<text x="609" y="501" font-size="13" fill="#6b7465">使用固定文本条件 c</text>
+<rect x="889" y="445" width="270" height="77" rx="8" fill="#fffefa" stroke="#c9d0c2"/>
+<text x="904" y="475" font-size="18" fill="#30382f">解码器 D → 图片 Î</text>
+<text x="904" y="501" font-size="13" fill="#6b7465">求解结束后解码 ẑ₁</text>
+<path d="M213 483H274" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M503 468H583" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M594 501H514" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M394 522V563H1023V533" fill="none" stroke="#6d8373" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="536" y="453" font-size="13" fill="#6b7465">查询</text>
+<text x="531" y="520" font-size="13" fill="#6b7465">返回速度</text>
+<text x="495" y="555" font-size="14" fill="#6b7465">到达 t=1，输出最终 latent</text>
+</g></svg>

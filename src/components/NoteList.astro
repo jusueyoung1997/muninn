@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../utils/url';
+import { formatDate } from '../utils/notes';
+interface Props { notes: CollectionEntry<'notes'>[] }
+const { notes } = Astro.props;
+---
+<ul class="note-list">
+  {notes.map((note) => (
+    <li class="note-row">
+      <time class="row-date mono" datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time>
+      <div class="row-content">
+        <a class="note-title" href={withBase(`notes/${note.id}/`)}>{note.data.title}<span class="row-arrow" aria-hidden="true">↗</span></a>
+        {note.data.description && <p>{note.data.description}</p>}
+        {note.data.tags.length > 0 && <div class="row-details">
+          {note.data.tags.slice(0, 2).map(tag => <a href={withBase(`tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>)}
+        </div>}
+      </div>
+    </li>
+  ))}
+</ul>

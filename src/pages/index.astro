@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NoteList from '../components/NoteList.astro';
+import FlowArt from '../components/FlowArt.astro';
+import { withBase } from '../utils/url';
+import { formatDate } from '../utils/notes';
+const notes = (await getCollection('notes', ({ data }) => data.draft !== true)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const [featured, ...rest] = notes;
+const tagCounts = new Map<string, number>();
+for (const note of notes) for (const tag of note.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+<BaseLayout title="首页">
+  <section class="hero" aria-labelledby="intro-title">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot"></span> A NOTEBOOK FOR THE CURIOUS</p>
+      <h2 id="intro-title">打开人类智慧的<br/><span class="hero-emphasis">三把钥匙</span></h2>
+      <p class="hero-description">历史、科学和艺术<br />让我们一起推开世界的门～</p>
+      <a class="text-link" href={withBase('notes/')}>翻开全部文章 <span aria-hidden="true">↗</span></a>
+    </div>
+    <FlowArt />
+  </section>
+  <div class="home-grid">
+    <section class="writing-section" aria-labelledby="writing-title">
+      <div class="section-heading"><h2 id="writing-title"><span class="mono section-number">01 /</span> 文章与笔记</h2><span class="mono quiet">{String(notes.length).padStart(2, '0')} ENTRIES</span></div>
+      {featured && <article class="featured-note">
+        <div class="featured-top"><span class="eyebrow">LATEST ENTRY</span><time class="mono" datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time></div>
+        <h3><a href={withBase(`notes/${featured.id}/`)}>{featured.data.title}</a></h3>
+        {featured.data.description && <p>{featured.data.description}</p>}
+        <div class="featured-bottom"><div class="featured-tags">{featured.data.tags.slice(0, 2).map(tag => <a href={withBase(`tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>)}</div><a class="read-link" href={withBase(`notes/${featured.id}/`)}>阅读全文 <span aria-hidden="true">↗</span></a></div>
+      </article>}
+      <NoteList notes={rest} />
+      {!notes.length && <p class="empty-state">第一篇笔记，正在酝酿中。</p>}
+      <a class="archive-link" href={withBase('notes/')}>查看文章归档 <span aria-hidden="true">→</span></a>
+    </section>
+    <aside class="home-sidebar">
+      <section class="about-block"><p class="eyebrow">THE NOTEBOOK</p><h2>思考的一个落脚点。</h2><p>Muninn，意为记忆。<br />用文字整理理解，用代码验证想法。<br />一点积累，一点连接。</p><div class="notebook-stats"><span><strong>{String(notes.length).padStart(2, '0')}</strong> 篇文章</span><span><strong>{String(tags.length).padStart(2, '0')}</strong> 个主题</span></div></section>
+      {tags.length > 0 && <section class="topics-block"><div class="section-heading"><h2 class="eyebrow">EXPLORE TOPICS</h2><a href={withBase('tags/')} aria-label="查看全部主题">↗</a></div><div class="topic-list">{tags.slice(0, 8).map(([tag, count]) => <a href={withBase(`tags/${encodeURIComponent(tag)}/`)}><span><span class="hash">#</span> {tag}</span><span class="mono">{String(count).padStart(2, '0')}</span></a>)}</div></section>}
+      <div class="sidebar-note"><span aria-hidden="true">✳</span><p>Learning in public.<br />One note at a time.</p></div>
+    </aside>
+  </div>
+</BaseLayout>
